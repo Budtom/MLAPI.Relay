@@ -78,7 +78,7 @@ namespace MLAPI.Relay
                             Transport = TransportType.UNET,
                             AllowTemporaryAlloc = true,
                             MaxTemporaryAlloc = 1024 * 16,
-                            BandwidthGracePrediodLength = 60 * 2,
+                            BandwidthGracePeriodLength = 60 * 2,
                             BandwidthLimit = -1,
                             EnableRuntimeMetaLogging = true,
                             GracePeriodBandwidthLimit = -1,
@@ -99,7 +99,7 @@ namespace MLAPI.Relay
                             Transport = TransportType.UNET,
                             BufferSize = 1024 * 8,
                             AllowTemporaryAlloc = true,
-                            BandwidthGracePrediodLength = 60 * 2,
+                            BandwidthGracePeriodLength = 60 * 2,
                             BandwidthLimit = -1,
                             EnableRuntimeMetaLogging = true,
                             GracePeriodBandwidthLimit = -1,
@@ -117,7 +117,7 @@ namespace MLAPI.Relay
                             Transport = TransportType.UNET,
                             BufferSize = 1024 * 8,
                             AllowTemporaryAlloc = true,
-                            BandwidthGracePrediodLength = 60 * 2,
+                            BandwidthGracePeriodLength = 60 * 2,
                             BandwidthLimit = -1,
                             EnableRuntimeMetaLogging = true,
                             GracePeriodBandwidthLimit = -1,
@@ -138,7 +138,7 @@ namespace MLAPI.Relay
                     {
                         Transport = TransportType.Ruffles,
                         AllowTemporaryAlloc = true,
-                        BandwidthGracePrediodLength = 60 * 2,
+                        BandwidthGracePeriodLength = 60 * 2,
                         BandwidthLimit = -1,
                         BufferSize = 1024 * 8,
                         EnableRuntimeMetaLogging = true,
@@ -225,7 +225,13 @@ namespace MLAPI.Relay
                     {
                         Thread.Sleep(timeToSleep);
                     }
+
+                    //foreach (var room in Rooms)
+                    //{
+                    //    Console.WriteLine(Transport.GetEndPoint(room.ServerConnectionId).ToString());
+                    //}
                 }
+
                 catch (Exception e)
                 {
                     Console.WriteLine("[ERROR] Exception during loop: " + e);
@@ -273,6 +279,10 @@ namespace MLAPI.Relay
 
                                         // Resolve the endpoint
                                         IPEndPoint endpoint = Transport.GetEndPoint(connectionId);
+                                        endpoint.Port = 47775;
+
+                                        Console.WriteLine(endpoint.ToString());
+                                        Console.WriteLine(connectionId.ToString());
 
                                         if (endpoint != null)
                                         {
@@ -314,6 +324,8 @@ namespace MLAPI.Relay
 
                                         // Send connect to client
                                         Transport.Send(new ArraySegment<byte>(MESSAGE_BUFFER, 0, 19), DEFAULT_CHANNEL_BYTE, connectionId);
+
+                                        Console.WriteLine(endpoint.ToString());
                                     }
                                     break;
                                 case MessageType.ConnectToServer:

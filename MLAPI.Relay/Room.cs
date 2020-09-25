@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace MLAPI.Relay
 {
@@ -46,6 +49,9 @@ namespace MLAPI.Relay
                     // Disconnects the client
                     Program.Transport.Disconnect(client.ConnectionId);
                 }
+
+                RemoveIPFromDatabase();
+
 
                 // Delete the room
                 Program.Rooms.Remove(this);
@@ -98,6 +104,24 @@ namespace MLAPI.Relay
             }
 
             return false;
+        }
+
+        private void RemoveIPFromDatabase()
+        {
+            var serverAddress = Program.ServerAddressToRoom.FirstOrDefault(x => x.Value == this).Key;
+            var uri = "http://127.0.0.1:5000/hosts/" + String.Format(@"?where={{""IPAddress"": ""{0}""}}", ((IPEndPoint)(serverAddress)).Address.ToString().Remove(0,7));
+            Console.WriteLine(uri);
+
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.Method = "DELETE";
+
+            request.BeginGetResponse(new AsyncCallback(FinishWebRequest), request);
+        }
+
+        void FinishWebRequest(IAsyncResult result)
+        {
+            HttpWebResponse response = ((HttpWebRequest)result.AsyncState).EndGetResponse(result) as HttpWebResponse;
+            Console.WriteLine(response.StatusCode.ToString());
         }
 
         public bool Send(ulong toConnectionId, ulong fromConnectionId, byte channelName, ArraySegment<byte> data)
