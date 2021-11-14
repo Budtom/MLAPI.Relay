@@ -359,6 +359,7 @@ namespace MLAPI.Relay
 
                                         // Create endpoint
                                         IPEndPoint endpoint = new IPEndPoint(address, port);
+                                        endpoint.Port = 47775;
 
                                         if (Config.EnableRuntimeMetaLogging) Console.WriteLine("[INFO] Connection requested to address " + endpoint);
 

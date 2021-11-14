@@ -50,7 +50,7 @@ namespace MLAPI.Relay
                     Program.Transport.Disconnect(client.ConnectionId);
                 }
 
-                RemoveIPFromDatabase();
+                //RemoveIPFromDatabase();
 
 
                 // Delete the room
